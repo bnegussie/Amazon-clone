@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
@@ -7,11 +8,13 @@ import "./../../App.css"
 function NavBar() {
     return (
         <div className="nav-bar container">
-            <img 
-                className="amazon-logo"
-                src="/images/amazon-logo.png"
-                alt="Amazon"
-            />
+            <Link to="/">
+                <img 
+                    className="amazon-logo"
+                    src="/images/amazon-logo.png"
+                    alt="Amazon"
+                />
+            </Link>
 
             <div className="search-bar container">
                 <input className="search-bar" type="text" /> 
@@ -34,11 +37,11 @@ function NavBar() {
                     <span className="nav-bar-options_line-two">Prime</span>
                 </div>
 
-                <div className="nav-bar-options_basket">
+                <Link to="/Checkout" className="nav-bar-options_basket">
                     <ShoppingBasketIcon />
 
                     <span className="nav-bar-options_line-two basket-counter">0</span>
-                </div>
+                </Link>
             </div>
         </div>
     )
