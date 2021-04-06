@@ -1,8 +1,39 @@
 :root {
     --black: #131921;
     --amazon-orange: #f0c14b;
+
+    --border-color-one: #a88734;
+    --border-color-two: #9c7e31;
+    --border-color-three: #846a29;
+}
+/************************************** START: CHECKOUT.JS ***************************************/
+.checkout-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    height: max-content;
 }
 
+.checkout-grid-container {
+    margin-top: 15px;
+}
+
+.checkout-left-container {
+    background-color: white;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.checkout-page.ad {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.checkout-title {
+    margin-right: 10px;
+    border-bottom: 1px solid lightgray;
+}
+/************************************** END: CHECKOUT.JS *****************************************/
 /************************************** START: HEADER.JS *****************************************/
 .amazon-logo {
     width: 100px;
@@ -113,7 +144,7 @@
     background-color: var(--amazon-orange);
     border: 1px solid;
     margin-top: 10px;
-    border-color: #a88734 #9c7e31 #846a29;
+    border-color: var(--border-color-one) var(--border-color-two) var(--border-color-three);
     color: #111;
 }
 
@@ -145,3 +176,63 @@
     color: gold;
 }
 /************************************** END: PRODUCT.JS ******************************************/
+/************************************** START: SUBTOTAL.JS ***************************************/
+.subtotal-btn {
+    background: var(--amazon-orange);
+    border-radius: 2px;
+    width: 100%;
+    height: 30px;
+    border: 1px solid;
+    border-color: var(--border-color-one) var(--border-color-two) var(--border-color-three);
+    color: #111;
+
+    margin-top: 10px;
+}
+
+.subtotal-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 80%;
+    height: 100px;
+    padding: 20px;
+    background-color: white;
+    border: 1px solit #dddddd;
+    border-radius: 4px;
+
+    margin: 0 20% 0 20%;
+}
+
+.subtotal-gift {
+    display: flex;
+    align-items: center;
+}
+
+.subtotal-gift > input {
+    margin-right: 5px;
+}
+/************************************** END: SUBTOTAL.JS *****************************************/
+
+
+
+/* MOBILE MODE FOR ALL FILES: */
+@media screen and (max-width: 700px) {
+    /* START: SUBTOTAL.JS */
+    .subtotal-container {
+        width: 90%;
+        height: 120px;
+
+        margin: 0 10% 0 10%;
+    }
+    /* END: SUBTOTAL.JS */
+}
+
+@media screen and (max-width: 500px) {
+    /* START: SUBTOTAL.JS */
+    .subtotal-container {
+        height: 140px;
+
+        margin: 0 5% 0 5%;
+    }
+    /* END: SUBTOTAL.JS */
+}

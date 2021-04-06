@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 
 // Components:
-import Checkout from "./components/Checkout";
+import Checkout from "./components/checkout/Checkout";
 import Home from "./components/home/Home";
 import NavBar from "./components/nav-bar/NavBar";
 import ScrollToTop from "./components/ScrollToTop";
