@@ -34,7 +34,7 @@
     border-bottom: 1px solid lightgray;
 }
 /************************************** END: CHECKOUT.JS *****************************************/
-/************************************** START: HEADER.JS *****************************************/
+/************************************** START: NAVBAR.JS *****************************************/
 .amazon-logo {
     width: 100px;
     object-fit: contain;
@@ -65,12 +65,17 @@
 
 .nav-bar-options_basket {
     color: white;
+    
     display: flex;
 }
 
 .nav-bar-options_container {
     display: flex;
     justify-content: space-evenly;
+}
+
+.nav-bar-options_container > a {
+    text-decoration: none;
 }
 
 .nav-bar-options_line-one {
@@ -102,7 +107,7 @@
     height: 22px !important;
     background-color: var(--amazon-orange);
 }
-/************************************** END: HEADER.JS *******************************************/
+/************************************** END: NAVBAR.JS *******************************************/
 /************************************** START: HOME.JS *******************************************/
 .home-container {
     width: 100%;

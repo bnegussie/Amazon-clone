@@ -1,9 +1,30 @@
 import React from 'react';
 import StarOutlineIcon from '@material-ui/icons/StarOutline';
 
+// Components:
+import { useStateValue } from './data-manager/StateProvider';
+
 import "./../App.css";
 
-function Product({ shortTitle, title, price, rating, image }) {
+function Product({ id, shortTitle, title, price, rating, image }) {
+    const [state, dispatch] = useStateValue();
+
+    function addToBacket() {
+        // Sending the item into the dat layer:
+        dispatch({
+            type: "ADD_TO_BASKET",
+            item: {
+                id: id,
+                shortTitle: shortTitle,
+                title: title,
+                price: price,
+                rating: rating,
+                image: image
+            }
+        });
+    }
+
+
     return (
         <div className="product-container">
             <div className="product-info-container">
@@ -28,7 +49,7 @@ function Product({ shortTitle, title, price, rating, image }) {
                     src={ image }
                     alt={ shortTitle ? shortTitle : title }
                 />
-                <button className="product-btn">
+                <button className="product-btn" onClick={addToBacket} >
                     Add to basket
                 </button>
             </div>

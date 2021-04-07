@@ -3,9 +3,16 @@ import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 
+// Components:
+import { useStateValue } from "../data-manager/StateProvider";
+
 import "./../../App.css"
 
 function NavBar() {
+
+    const [{ basket }, dispatch] = useStateValue();
+
+
     return (
         <div className="nav-bar container">
             <Link to="/">
@@ -40,7 +47,9 @@ function NavBar() {
                 <Link to="/Checkout" className="nav-bar-options_basket">
                     <ShoppingBasketIcon />
 
-                    <span className="nav-bar-options_line-two basket-counter">0</span>
+                    <span className="nav-bar-options_line-two basket-counter">
+                        { basket.length }
+                    </span>
                 </Link>
             </div>
         </div>
