@@ -7,10 +7,12 @@ import { useStateValue } from './data-manager/StateProvider';
 import "./../App.css";
 
 function Product({ id, shortTitle, title, price, rating, image }) {
+    
+    // eslint-disable-next-line
     const [state, dispatch] = useStateValue();
 
     function addToBacket() {
-        // Sending the item into the dat layer:
+        // Sending the item into the data layer:
         dispatch({
             type: "ADD_TO_BASKET",
             item: {
@@ -19,7 +21,8 @@ function Product({ id, shortTitle, title, price, rating, image }) {
                 title: title,
                 price: price,
                 rating: rating,
-                image: image
+                image: image,
+                quantity: 1
             }
         });
     }
@@ -36,8 +39,8 @@ function Product({ id, shortTitle, title, price, rating, image }) {
                 </p>
 
                 <div className="product-rating">
-                    {Array(rating).fill().map((currRatingCounter) => (
-                        <StarOutlineIcon className="star-icon" />
+                    {Array(rating).fill().map((currRatingCounter, key) => (
+                        <StarOutlineIcon className="star-icon" key={key} />
                     ))}
                     
                 </div>

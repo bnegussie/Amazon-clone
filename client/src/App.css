@@ -22,6 +22,8 @@
     background-color: white;
     border-radius: 4px;
     padding: 10px;
+
+    min-width: 400px;
 }
 
 .checkout-page.ad {
@@ -34,6 +36,35 @@
     border-bottom: 1px solid lightgray;
 }
 /************************************** END: CHECKOUT.JS *****************************************/
+/************************************** START: CHECKOUTPRODUCT.JS ********************************/
+.checkout-product-container {
+    display: flex;
+    border-bottom: 1px solid lightgray;
+
+    margin: 20px 0 20px 0;
+}
+
+.checkout-product-img {
+    object-fit: contain;
+    width: 180px;
+    height: 180px;
+
+    padding: 5px 0 5px 0;
+}
+
+.checkout-product-info-container {
+    padding-left: 20px;
+}
+
+.checkout-product-title {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.remove-item-link {
+    text-decoration: none;
+}
+/************************************** END: CHECKOUTPRODUCT.JS **********************************/
 /************************************** START: NAVBAR.JS *****************************************/
 .amazon-logo {
     width: 100px;
@@ -67,6 +98,7 @@
     color: white;
     
     display: flex;
+    margin-top: 5px;
 }
 
 .nav-bar-options_container {

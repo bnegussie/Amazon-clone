@@ -1,15 +1,17 @@
 import { Link } from "react-router-dom";
 import React from 'react';
 import SearchIcon from '@material-ui/icons/Search';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 // Components:
 import { useStateValue } from "../data-manager/StateProvider";
+import { getCartItemCount } from "./../data-manager/reducer";
 
 import "./../../App.css"
 
 function NavBar() {
 
+    // eslint-disable-next-line
     const [{ basket }, dispatch] = useStateValue();
 
 
@@ -45,10 +47,10 @@ function NavBar() {
                 </div>
 
                 <Link to="/Checkout" className="nav-bar-options_basket">
-                    <ShoppingBasketIcon />
+                    <ShoppingCartIcon />
 
                     <span className="nav-bar-options_line-two basket-counter">
-                        { basket.length }
+                        { getCartItemCount(basket) }
                     </span>
                 </Link>
             </div>
