@@ -13,7 +13,7 @@ import "./../../App.css";
 function Checkout() {
 
     // eslint-disable-next-line
-    const [{ basket }, dispatch] = useStateValue();
+    const [{ cart }, dispatch] = useStateValue();
 
 
 
@@ -32,7 +32,7 @@ function Checkout() {
                 <Grid item xs={7} className="checkout-left-container">
                     <h2 className="checkout-title">Shopping Cart</h2>
 
-                    {basket.map((item, key) => (
+                    {cart.map((item, key) => (
                         <CheckoutProduct  
                             key={key} 
                             id={item.id}
