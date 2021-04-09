@@ -8,11 +8,20 @@ function CheckoutProduct({ id, shortTitle, title, price, image, quantity }) {
 	// eslint-disable-next-line
 	const [{ cart }, dispatch] = useStateValue();
 
-	function removeFromCart() {
+	function removeAllItems() {
 		dispatch({
-			type: "REMOVE_FROM_CART",
+			type: "REMOVE_ALL_ITEMS_FROM_CART",
 			item: {
-				id: id,
+				id: id
+			},
+		});
+	}
+
+    function removeOneItem() {
+		dispatch({
+			type: "REMOVE_ONE_ITEM_FROM_CART",
+			item: {
+				id: id
 			},
 		});
 	}
@@ -38,16 +47,16 @@ function CheckoutProduct({ id, shortTitle, title, price, image, quantity }) {
 
 					{quantity > 1 ? (
 						<div>
-							<Link className="remove-all-items-link" to="#" onClick={removeFromCart}>
+							<Link className="remove-all-items-link" to="#" onClick={removeAllItems}>
 								Remove all
 							</Link>
 
-							<Link className="remove-one-item-link" to="#" onClick={removeFromCart}>
+							<Link className="remove-one-item-link" to="#" onClick={removeOneItem}>
 								Remove one item
 							</Link>
 						</div>
 					) : (
-						<Link className="remove-item-link" to="#" onClick={removeFromCart}>
+						<Link className="remove-item-link" to="#" onClick={removeAllItems}>
 							Remove item
 						</Link>
 					)}
