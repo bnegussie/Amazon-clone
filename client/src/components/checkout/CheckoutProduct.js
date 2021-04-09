@@ -7,7 +7,7 @@ import "./../../App.css"
 function CheckoutProduct({ id, shortTitle, title, price, image, quantity }) {
 
     // eslint-disable-next-line
-    const [{ basket }, dispatch] = useStateValue();
+    const [{ cart }, dispatch] = useStateValue();
 
     function removeFromCart() {
         dispatch({

@@ -3,14 +3,14 @@ import React from 'react';
 
 // Components:
 import { useStateValue } from "../data-manager/StateProvider";
-import { getBasketTotal, getCartItemCount } from "../data-manager/reducer";
+import { getCartTotal, getCartItemCount } from "../data-manager/reducer";
 
 import "./../../App.css";
 
 function Subtotal() {
 
     // eslint-disable-next-line
-    const [{ basket }, dispatch] = useStateValue();
+    const [{ cart }, dispatch] = useStateValue();
 
 
 
@@ -20,7 +20,7 @@ function Subtotal() {
                 renderText={(value) => (
                     <div>
                         <p>
-                            Subtotal ({ getCartItemCount(basket) } items): <strong> {value} </strong>
+                            Subtotal ({ getCartItemCount(cart) } items): <strong> {value} </strong>
                         </p>
                         <small className="subtotal-gift">
                             <input type="checkbox" />
@@ -29,7 +29,7 @@ function Subtotal() {
                     </div>
                 )}
                 decimalScale={2}
-                value={ getBasketTotal(basket) }
+                value={ getCartTotal(cart) }
                 displayType={"text"}
                 thousandSeparator={true}
                 prefix={"$"}

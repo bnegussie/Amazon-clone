@@ -12,7 +12,7 @@ import "./../../App.css"
 function NavBar() {
 
     // eslint-disable-next-line
-    const [{ basket }, dispatch] = useStateValue();
+    const [{ cart }, dispatch] = useStateValue();
 
 
     return (
@@ -46,11 +46,11 @@ function NavBar() {
                     <span className="nav-bar-options_line-two">Prime</span>
                 </div>
 
-                <Link to="/Checkout" className="nav-bar-options_basket">
+                <Link to="/Checkout" className="nav-bar-options_cart">
                     <ShoppingCartIcon />
 
-                    <span className="nav-bar-options_line-two basket-counter">
-                        { getCartItemCount(basket) }
+                    <span className="nav-bar-options_line-two cart-counter">
+                        { getCartItemCount(cart) }
                     </span>
                 </Link>
             </div>

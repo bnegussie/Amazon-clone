@@ -72,7 +72,7 @@
     margin: 18px 20px 0 20px;
 }
 
-.basket-counter {
+.cart-counter {
     margin: 0 10px 0 10px;
 }
 
@@ -94,7 +94,7 @@
     margin: 0 10px 0 10px;
 }
 
-.nav-bar-options_basket {
+.nav-bar-options_cart {
     color: white;
     
     display: flex;

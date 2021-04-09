@@ -14,7 +14,7 @@ function Product({ id, shortTitle, title, price, rating, image }) {
     function addToBacket() {
         // Sending the item into the data layer:
         dispatch({
-            type: "ADD_TO_BASKET",
+            type: "ADD_TO_CART",
             item: {
                 id: id,
                 shortTitle: shortTitle,
@@ -53,7 +53,7 @@ function Product({ id, shortTitle, title, price, rating, image }) {
                     alt={ shortTitle ? shortTitle : title }
                 />
                 <button className="product-btn" onClick={addToBacket} >
-                    Add to basket
+                    Add to cart
                 </button>
             </div>
         </div>
