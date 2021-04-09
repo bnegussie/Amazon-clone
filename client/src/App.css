@@ -23,7 +23,7 @@
     border-radius: 4px;
     padding: 10px;
 
-    min-width: 400px;
+    min-width: 550px !important;
 }
 
 .checkout-page.ad {
@@ -61,8 +61,25 @@
     font-weight: 800;
 }
 
-.remove-item-link {
+.quantity-and-remove-container {
+    display: flex;
+}
+
+.quantity-value {
+    padding-right: 10px;
+    border-right: 2px solid grey;
+}
+
+.remove-all-items-link {
     text-decoration: none;
+    padding: 0 10px 0 10px;
+    border-right: 2px solid grey;
+}
+
+.remove-item-link,
+.remove-one-item-link {
+    text-decoration: none;
+    padding-left: 10px;    
 }
 /************************************** END: CHECKOUTPRODUCT.JS **********************************/
 /************************************** START: NAVBAR.JS *****************************************/
