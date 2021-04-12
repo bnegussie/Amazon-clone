@@ -143,6 +143,12 @@
     width: 100%;
 }
 
+.product-categories {
+    border: none;
+    width: 80%;
+    min-width: 200px;
+}
+
 .search-bar.container {
     display: flex;
     flex: 1;
@@ -152,9 +158,10 @@
 }
 
 .search-icon {
-    padding: 5px;
+    padding: 7px;
     height: 22px !important;
     background-color: var(--amazon-orange);
+    border-radius: 4px;
 }
 /************************************** END: NAVBAR.JS *******************************************/
 /************************************** START: HOME.JS *******************************************/

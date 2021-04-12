@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import Select from "react-select";
 
 // Components:
 import { useStateValue } from "../data-manager/StateProvider";
@@ -13,6 +14,54 @@ function NavBar() {
 
     // eslint-disable-next-line
     const [{ cart }, dispatch] = useStateValue();
+    
+    const [allSearchCategories, setAllSearchCategories] = useState([]);
+    const [selectedSearchCategory, setSelectedSearchCategory] = useState("");
+    // eslint-disable-next-line
+    const [selectedSearchCategoryTable, setSelectedSearchCategoryTable] = useState("");
+
+    
+
+    function setSeachBar(e) {
+        if (e) {
+            setSelectedSearchCategory( e.label );
+            setSelectedSearchCategoryTable( e.value );
+        } else {
+            setSelectedSearchCategory("");
+            setSelectedSearchCategoryTable("");
+        }
+    }
+
+
+    // Capturing the categories for the products in the Amazon store:
+    // Used for the search bar.
+    useEffect(() => {
+        getCategories();
+
+        async function getCategories() {
+            try {
+                const response = await fetch("http://localhost:5000/api/products/categories");
+                const productCategories = await response.json();
+                
+                
+                productCategories.forEach(function(currCategory, index) {
+                    allSearchCategories.push({
+                        "label": `${currCategory.c_name}`,
+                        "value": `${currCategory.table_name}`
+                    })
+                });
+
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+
+        return () => {
+            setAllSearchCategories([]);
+        }
+
+    }, [allSearchCategories]);
+
 
 
     return (
@@ -26,7 +75,14 @@ function NavBar() {
             </Link>
 
             <div className="search-bar container">
-                <input className="search-bar" type="text" /> 
+                <Select
+                    options={allSearchCategories}
+                    onChange={e => setSeachBar(e)}
+                    value={selectedSearchCategory.label}
+                    placeholder="Search by categories"
+                    className="product-categories"
+                    isClearable
+                />
                 <SearchIcon className="search-icon" />
             </div>
 
