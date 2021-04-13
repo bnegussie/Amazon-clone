@@ -1,12 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+
+import "./../../App.css";
 
 function SignIn() {
+
+    const history = useHistory();
+
     return (
         <div className="sign-in-container">
             <Link to="/">
                 <img
-                    className="sign-in-page amazon-logo"
+                    className="auth-page amazon-logo"
                     src="/images/amazon-logo-black-text.png"
                     alt="Amazon"
                 />
@@ -17,9 +22,9 @@ function SignIn() {
                     <h1>Sign-In</h1>
                     <form>
                         <h5>Email</h5>
-                        <input type="email" />
+                        <input type="email" required />
                         <h5>Password</h5>
-                        <input type="password" />
+                        <input type="password" required />
                     </form>
 
                     <button className="sign-in-btn">
@@ -34,7 +39,10 @@ function SignIn() {
                 </div>
                 
 
-                <button className="create-account-btn">
+                <button 
+                    className="create-account-btn" 
+                    onClick={e => history.push("/User/Create-Account")}>
+
                     Create your Amazon account
                 </button>
             </div>

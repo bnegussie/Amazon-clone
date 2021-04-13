@@ -11,8 +11,10 @@ import Home from "./components/home/Home";
 import NavBar from "./components/nav-bar/NavBar";
 import ScrollToTop from "./components/ScrollToTop";
 import SignIn from "./components/auth/SignIn";
+import CreateAccount from "./components/auth/CreateAccount";
 
 import "./App.css";
+
 
 function App() {
 	return (
@@ -29,6 +31,10 @@ function App() {
 
             <Route exact path="/User/Sign-In">
               <SignIn />
+            </Route>
+
+            <Route exact path="/User/Create-Account">
+              <CreateAccount />
             </Route>
 
             
