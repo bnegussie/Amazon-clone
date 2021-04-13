@@ -10,6 +10,7 @@ import Checkout from "./components/checkout/Checkout";
 import Home from "./components/home/Home";
 import NavBar from "./components/nav-bar/NavBar";
 import ScrollToTop from "./components/ScrollToTop";
+import SignIn from "./components/auth/SignIn";
 
 import "./App.css";
 
@@ -19,10 +20,18 @@ function App() {
 			<Router>
 				<div className="app-container">
 					<ScrollToTop />
-          <NavBar />
 
           <Switch>
-            <Route exact path="/Checkout" render={props => <Checkout /> } />
+            <Route exact path="/Checkout">
+              <NavBar />
+              <Checkout />
+            </Route>
+
+            <Route exact path="/User/Sign-In">
+              <SignIn />
+            </Route>
+
+            
 
 
 
@@ -30,7 +39,10 @@ function App() {
 
             
             {/* Home page and fallback page. */}
-            <Route path="/" render={props => <Home /> } />
+            <Route path="/">
+              <NavBar />
+              <Home />
+            </Route>
           </Switch>
 
 				</div>

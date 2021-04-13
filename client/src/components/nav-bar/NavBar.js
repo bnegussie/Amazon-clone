@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@material-ui/icons/Search';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import Select from "react-select";
 
 // Components:
@@ -69,7 +70,7 @@ function NavBar() {
             <Link to="/">
                 <img 
                     className="amazon-logo"
-                    src="/images/amazon-logo.png"
+                    src="/images/amazon-logo-white-text.png"
                     alt="Amazon"
                 />
             </Link>
@@ -87,19 +88,19 @@ function NavBar() {
             </div>
 
             <div className="nav-bar-options_container">
-                <div className="nav-bar-options">
-                    <span className="nav-bar-options_line-one">Hello</span>
-                    <span className="nav-bar-options_line-two">Sign in</span>
-                </div>
+                <Link to="/User/Sign-In">
+                    <div className="nav-bar-options">
+                        <span className="nav-bar-options_line-one">Hello</span>
+                        <div className="nav-bar-sign-in">
+                            <span className="nav-bar-options_line-two">Sign in</span>
+                            <ArrowDropDownIcon />
+                        </div>
+                    </div>
+                </Link>
 
                 <div className="nav-bar-options">
                     <span className="nav-bar-options_line-one">Returns</span>
                     <span className="nav-bar-options_line-two">& Orders</span>
-                </div>
-
-                <div className="nav-bar-options">
-                    <span className="nav-bar-options_line-one">Your</span>
-                    <span className="nav-bar-options_line-two">Prime</span>
                 </div>
 
                 <Link to="/Checkout" className="nav-bar-options_cart">
