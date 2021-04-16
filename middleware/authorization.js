@@ -9,7 +9,7 @@ module.exports = async(req, res, next) => {
         // Getting the token, which is stored within the req.header:
         const jwtToken = req.header("token");
 
-        if (!jwtToken || typeof jwtToken === "undefined") {
+        if (!jwtToken || typeof jwtToken === 'undefined' || jwtToken === 'undefined') {
             return res.status(401).json({ message: "The user has not logged in." });
         }
 

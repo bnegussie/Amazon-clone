@@ -1,8 +1,10 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import { 
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Redirect
 } from "react-router-dom";
 
 // Components:
@@ -14,9 +16,47 @@ import SignIn from "./components/auth/SignIn";
 import CreateAccount from "./components/auth/CreateAccount";
 
 import "./App.css";
+import 'react-toastify/dist/ReactToastify.css'
+
+toast.configure();
 
 
 function App() {
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+
+  // Quickly updating whether or not the user is authenticated:
+  function setAuth( authState ) {
+    setIsAuthenticated(authState);
+  }
+
+  async function isAuth() {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/is-verified", {
+        method: "GET",
+        headers: { "token": localStorage.token }
+      });
+
+      if (response.status === 200) {
+        setIsAuthenticated(true);
+      }
+      
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  // Checking if the user is logged in each time the page is refreshed:
+  useEffect(() => {
+    isAuth();
+
+    return () => {
+      setIsAuthenticated(false);
+    }
+  }, []);
+
+
 	return (
 		<Fragment>
 			<Router>
@@ -24,31 +64,49 @@ function App() {
 					<ScrollToTop />
 
           <Switch>
-            <Route exact path="/Checkout">
-              <NavBar />
-              <Checkout />
-            </Route>
+            <Route exact path="/Checkout" 
+              render={props =>
+                <Fragment>
+                  <NavBar setAuth={setAuth} />
+                  <Checkout />
+                </Fragment>
+              }
+            />
 
-            <Route exact path="/User/Sign-In">
-              <SignIn />
-            </Route>
+            <Route exact path="/User/Sign-In" 
+              render={props =>
+                isAuthenticated ? (
+                  <Redirect to="/" />
+                ) : (
+                  <SignIn setAuth={setAuth} />
+                )
+              }
+            />
 
-            <Route exact path="/User/Create-Account">
-              <CreateAccount />
-            </Route>
+            <Route exact path="/User/Create-Account" 
+              render={props =>
+                isAuthenticated ? (
+                  <Redirect to="/" />
+                ) : (
+                  <CreateAccount setAuth={setAuth} />
+                )
+              }
+            />
 
             
-
-
-
+            
 
 
             
             {/* Home page and fallback page. */}
-            <Route path="/">
-              <NavBar />
-              <Home />
-            </Route>
+            <Route path="/" 
+              render={props =>
+                <Fragment>
+                  <NavBar setAuth={setAuth} isAuthenticated={isAuthenticated} />
+                  <Home />
+                </Fragment>
+              }
+            />
           </Switch>
 
 				</div>

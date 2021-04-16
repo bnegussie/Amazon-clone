@@ -6,6 +6,12 @@
     --border-color-two: #9c7e31;
     --border-color-three: #846a29;
 }
+
+input {
+    text-indent: 5px;
+    color: black;
+    font-size: 16px;
+}
 /************************************** START: CHECKOUT.JS ***************************************/
 .checkout-container {
     display: flex;

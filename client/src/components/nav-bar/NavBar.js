@@ -10,8 +10,9 @@ import { useStateValue } from "../data-manager/StateProvider";
 import { getCartItemCount } from "./../data-manager/reducer";
 
 import "./../../App.css"
+import { toast } from "react-toastify";
 
-function NavBar() {
+function NavBar({ setAuth, isAuthenticated }) {
 
     // eslint-disable-next-line
     const [{ cart }, dispatch] = useStateValue();
@@ -20,6 +21,8 @@ function NavBar() {
     const [selectedSearchCategory, setSelectedSearchCategory] = useState("");
     // eslint-disable-next-line
     const [selectedSearchCategoryTable, setSelectedSearchCategoryTable] = useState("");
+
+    const [userName, setUserName] = useState("");
 
     
 
@@ -30,6 +33,15 @@ function NavBar() {
         } else {
             setSelectedSearchCategory("");
             setSelectedSearchCategoryTable("");
+        }
+    }
+
+    function logout() {
+        if (isAuthenticated) {
+            localStorage.removeItem( "token" );
+            setAuth(false);
+            setUserName("");
+            toast.success("You have successfully logged out.", {autoClose: 3000});
         }
     }
 
@@ -64,6 +76,37 @@ function NavBar() {
     }, [allSearchCategories]);
 
 
+    // Getting the user's name if they have signed in:
+    useEffect(() => {
+		getUserName();
+
+        async function getUserName() {
+            if (isAuthenticated) {
+                try {
+                    const response = await fetch("http://localhost:5000/api/users/user-name", {
+                        method: "GET",
+                        headers: { token: localStorage.token }
+                    });
+
+                    const parseResp = await response.json();
+
+                    if (response.status === 200) {
+                        setUserName( parseResp.user_name );
+                    }
+
+                } catch (error) {
+                    console.error( error.message );
+                }
+            }
+        }
+
+        return () => {
+            setUserName("");
+        }
+
+	}, [isAuthenticated]);
+
+
 
     return (
         <div className="nav-bar container">
@@ -88,11 +131,15 @@ function NavBar() {
             </div>
 
             <div className="nav-bar-options_container">
-                <Link to="/User/Sign-In">
+                <Link to={isAuthenticated ? ("/") : ("/User/Sign-In")} onClick={logout}>
                     <div className="nav-bar-options">
-                        <span className="nav-bar-options_line-one">Hello</span>
+                        <span className="nav-bar-options_line-one">Hello { userName }</span>
                         <div className="nav-bar-sign-in">
-                            <span className="nav-bar-options_line-two">Sign in</span>
+                            <span className="nav-bar-options_line-two"> 
+                            {isAuthenticated ?
+                                ("Log out") : ("Sign in")
+                            } 
+                            </span>
                             <ArrowDropDownIcon />
                         </div>
                     </div>
