@@ -35,8 +35,6 @@ function CreateAccount({ setAuth }) {
                 return toast.error("Passwords must match.", {autoClose: 3000});
                 
             } else if (pwd.length < 6) {
-                console.log("Ur pwd is too short.");
-
                 return toast.error("Your password must be at least six characters long.", 
                                     {autoClose: 4000});
 
@@ -50,7 +48,8 @@ function CreateAccount({ setAuth }) {
             const regResponse = await fetch("http://localhost:5000/api/auth/create-account", {
                 method: "POST",
                 headers: {"Content-type": "application/json"},
-                body: JSON.stringify(body)
+				body: JSON.stringify(body),
+				credentials: 'include'
             });
 
             const parseRegResponse = await regResponse.json();
@@ -60,12 +59,11 @@ function CreateAccount({ setAuth }) {
             }
 
             // Successful registeration:
-            localStorage.setItem("token", parseRegResponse.token);
-            setAuth(true);
+            await setAuth(true);
             toast.success( parseRegResponse.message, {autoClose: 3000} );
             
         } catch (error) {
-            return toast.error( error.message );
+			return toast.error( error.message );
         }
     }
 

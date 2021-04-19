@@ -36,15 +36,13 @@ function NavBar({ setAuth, isAuthenticated }) {
         }
     }
 
-    function logout() {
+    async function logout() {
         if (isAuthenticated) {
-            localStorage.removeItem( "token" );
-            setAuth(false);
+            await setAuth(false);
             setUserName("");
             toast.success("You have successfully logged out.", {autoClose: 3000});
         }
     }
-
 
     // Capturing the categories for the products in the Amazon store:
     // Used for the search bar.
@@ -54,9 +52,9 @@ function NavBar({ setAuth, isAuthenticated }) {
         async function getCategories() {
             try {
                 const response = await fetch("http://localhost:5000/api/products/categories");
+
                 const productCategories = await response.json();
-                
-                
+
                 productCategories.forEach(function(currCategory, index) {
                     allSearchCategories.push({
                         "label": `${currCategory.c_name}`,
@@ -85,7 +83,7 @@ function NavBar({ setAuth, isAuthenticated }) {
                 try {
                     const response = await fetch("http://localhost:5000/api/users/user-name", {
                         method: "GET",
-                        headers: { token: localStorage.token }
+                        credentials: 'include'
                     });
 
                     const parseResp = await response.json();

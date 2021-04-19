@@ -32,11 +32,11 @@ router.post("/create-account", validInfo, async(req, res) => {
         );
         
 
-        // 5) Generating the user's JWT:
-        const token = jwtGenerator(addUser.rows[0].user_id);
+        // 5) Generating the user's JWT and storing it in a cookie:
+        await jwtGenerator(res, addUser.rows[0].user_id);
 
 
-        res.status(200).json({ message: "Successfully created your account!", token: token });
+        res.status(200).json({ message: "Successfully created your account!" });
 
     } catch (error) {
         res.status(401).json({ message: error.message });
@@ -69,10 +69,10 @@ router.post("/sign-in", validInfo, async(req, res) => {
 
 
         // 4) Generating a JWT access token for the user:
-        const token = jwtGenerator( checkUser.rows[0].user_id );
+        await jwtGenerator( res, checkUser.rows[0].user_id );
 
 
-        res.status(200).json({ message: "Successful login!", token: token });
+        return res.status(200).json({ message: "Successful login!" });
 
     } catch (error) {
         res.status(401).json({ message: error.message });
@@ -82,6 +82,16 @@ router.post("/sign-in", validInfo, async(req, res) => {
 router.get("/is-verified", authorization, async(req, res) => {
     try {
         res.status(200).json({ message: "This is an authorized user." });
+
+    } catch (error) {
+        res.status(401).json({ message: error.message });
+    }
+});
+
+router.get("/log-out", async(req, res) => {
+    try {
+        res.clearCookie("token");
+        res.status(200).json({ message: "Successfully logged out." });
 
     } catch (error) {
         res.status(401).json({ message: error.message });

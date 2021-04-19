@@ -6,13 +6,11 @@ require("dotenv").config();
 module.exports = async(req, res, next) => {
     try {
         // 1) Destructuring the given data:
-        // Getting the token, which is stored within the req.header:
-        const jwtToken = req.header("token");
+        const jwtToken = req.cookies.token;
 
-        if (!jwtToken || typeof jwtToken === 'undefined' || jwtToken === 'undefined') {
+        if (!jwtToken) {
             return res.status(401).json({ message: "The user has not logged in." });
         }
-
 
         // 2) Checking the validity of the JWT provided:
         const payload = jwtLib.verify(jwtToken, process.env.jwtSecret);

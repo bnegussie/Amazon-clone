@@ -386,6 +386,7 @@ input {
     display: flex;
     flex-direction: column;
     text-align: center;
+    margin-bottom: 10px;
 }
 
 .sign-in-input-container {

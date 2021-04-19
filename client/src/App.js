@@ -27,15 +27,29 @@ function App() {
 
 
   // Quickly updating whether or not the user is authenticated:
-  function setAuth( authState ) {
+  async function setAuth( authState ) {
     setIsAuthenticated(authState);
+
+    if (authState === false) {
+      // Clearing the access token:
+      const response = await fetch("http://localhost:5000/api/auth/log-out", {
+        method: "GET",
+        credentials: 'include'
+      });
+
+      if (response.status !== 200) {
+        const parseResp = await response.json();
+
+        return toast.error( parseResp );
+      }
+    }
   }
 
   async function isAuth() {
     try {
       const response = await fetch("http://localhost:5000/api/auth/is-verified", {
         method: "GET",
-        headers: { "token": localStorage.token }
+        credentials: 'include'
       });
 
       if (response.status === 200) {
@@ -67,7 +81,7 @@ function App() {
             <Route exact path="/Checkout" 
               render={props =>
                 <Fragment>
-                  <NavBar setAuth={setAuth} />
+                  <NavBar setAuth={setAuth} isAuthenticated={isAuthenticated} />
                   <Checkout />
                 </Fragment>
               }

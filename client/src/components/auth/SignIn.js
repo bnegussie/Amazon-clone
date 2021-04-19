@@ -30,7 +30,8 @@ function SignIn({ setAuth }) {
             const signInResp = await fetch("http://localhost:5000/api/auth/sign-in", {
                 method: "POST",
                 headers: {"Content-type": "application/json"},
-                body: JSON.stringify(body)
+				body: JSON.stringify(body),
+				credentials: 'include'				
             });
 
             const parseSignInResp = await signInResp.json();
@@ -40,12 +41,11 @@ function SignIn({ setAuth }) {
             }
 
             // The user has successful signed in:
-            localStorage.setItem("token", parseSignInResp.token);
-            setAuth(true);
+            await setAuth(true);
             toast.success( parseSignInResp.message, {autoClose: 3000} );
             
         } catch (error) {
-            return toast.error( error.message );
+			return toast.error( error.message );
         }
     }
 
