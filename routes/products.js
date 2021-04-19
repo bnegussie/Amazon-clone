@@ -7,10 +7,10 @@ router.get("/categories", async(req, res) => {
     try {
         const allCategories = await pool.query("SELECT * FROM product_categories;");
 
-        res.json(allCategories.rows);
+        return res.status(200).json(allCategories.rows);
 
     } catch (error) {
-        console.error(error.message);
+        res.status(500).json({ message: error.message });
     }
 });
 /************************************** END: product_categories DB *******************************/
