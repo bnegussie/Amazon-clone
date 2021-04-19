@@ -91,6 +91,7 @@ function CreateAccount({ setAuth }) {
 						required
 						value={userName}
 						onChange={(e) => setUserName(e.target.value)}
+						autoFocus
 					/>
 
 					<h5>Email</h5>

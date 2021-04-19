@@ -90,6 +90,7 @@ router.get("/is-verified", authorization, async(req, res) => {
 
 router.get("/log-out", async(req, res) => {
     try {
+        res.clearCookie("refToken");
         res.clearCookie("token");
         res.status(200).json({ message: "Successfully logged out." });
 

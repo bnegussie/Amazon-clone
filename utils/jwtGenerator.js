@@ -7,16 +7,29 @@ function jwtGenerator(res, user_id) {
         user: user_id
     }
 
-    const token = jwtLib.sign(payload, process.env.jwtSecret, { expiresIn: "1hr" });
+    // Expires in one day:
+    const refreshTokenExpTime = 1000 * 60 * 60 * 24;
+    // Expires in one minute:
+    const accessTokenExpTime = 1000 * 60;
+    
+    const refreshToken = jwtLib.sign(payload, process.env.jwtRefresh, { expiresIn: "1d" });
+    const token = jwtLib.sign(payload, process.env.jwtSecret, { expiresIn: 60 });
 
-    const expTime = 1000 * 60 * 60;
-
-    return res.cookie('token', token, {
-        expires: new Date(Date.now() + expTime),
+    res.cookie('refToken', refreshToken, {
+        expires: new Date(Date.now() + refreshTokenExpTime),
         secure: true,
         httpOnly: true,
         sameSite: 'strict'
-      });
+    });
+
+    res.cookie('token', token, {
+        expires: new Date(Date.now() + accessTokenExpTime),
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict'
+    });
+    
+    return
 }
 
 module.exports = jwtGenerator;
