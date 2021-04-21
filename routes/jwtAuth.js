@@ -4,6 +4,8 @@ const bcryptLib = require("bcrypt");
 const jwtGenerator = require("./../utils/jwtGenerator");
 const validInfo = require("./../middleware/validInfo")
 const authorization = require("./../middleware/authorization");
+const jwtLib = require("jsonwebtoken");
+const atob = require("atob");
 
 // Registeration route:
 router.post("/create-account", validInfo, async(req, res) => {
@@ -90,12 +92,63 @@ router.get("/is-verified", authorization, async(req, res) => {
 
 router.get("/log-out", async(req, res) => {
     try {
-        res.clearCookie("refToken");
-        res.clearCookie("token");
-        res.status(200).json({ message: "Successfully logged out." });
+        // Clear both tokens from the user's account:
+        const jwtToken = req.cookies.token;
+
+        if (jwtToken) {
+            // Checking the validity of the JWT provided so we can extract the user's id:
+            const payload = jwtLib.verify(jwtToken, process.env.jwtSecret);
+            const userId = payload.user;
+
+            const tokenInDB = await pool.query(
+                "SELECT user_access_token FROM users WHERE user_id = $1;", [
+                    userId
+            ]);
+
+            const accessTokenInDB = tokenInDB.rows[0].user_access_token;
+
+            if (jwtToken === accessTokenInDB) {
+                const clear = "";
+                await pool.query(
+                    "UPDATE users SET user_access_token = $1, user_refresh_token = $2 WHERE user_id = $3", [
+                        clear, clear, userId
+                ]);
+            }
+        }
 
     } catch (error) {
-        res.status(401).json({ message: error.message });
+
+        if (error.message === "jwt expired") {
+            var userId = "";
+            try {
+                // Check if this access token is the same one that is in the DB:
+                const exiredJWTToken = req.cookies.token;
+                const expiredPayload = JSON.parse(atob(exiredJWTToken.split('.')[1]));
+                userId = expiredPayload.user;
+
+                const tokenInDB = await pool.query(
+                    "SELECT user_access_token FROM users WHERE user_id = $1;", [
+                        userId
+                ]);
+
+                const accessTokenInDB = tokenInDB.rows[0].user_access_token;
+
+                if (exiredJWTToken === accessTokenInDB) {
+                    const clear = "";
+                    await pool.query(
+                        "UPDATE users SET user_access_token = $1, user_refresh_token = $2 WHERE user_id = $3", [
+                            clear, clear, userId
+                    ]);
+                }
+                
+            } catch (error) {
+                // Clearing the cookie below:
+            }
+        }
+
+    } finally {
+        res.clearCookie("token");
+        return res.status(200).json({ message: "Successfully logged out." });
     }
 });
 

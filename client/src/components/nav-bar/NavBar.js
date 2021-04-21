@@ -12,7 +12,7 @@ import { getCartItemCount } from "./../data-manager/reducer";
 import "./../../App.css"
 import { toast } from "react-toastify";
 
-function NavBar({ setAuth, isAuthenticated }) {
+function NavBar({ setAuth, isAuthenticated, isAuth }) {
 
     // eslint-disable-next-line
     const [{ cart }, dispatch] = useStateValue();
@@ -41,6 +41,12 @@ function NavBar({ setAuth, isAuthenticated }) {
             await setAuth(false);
             setUserName("");
             toast.success("You have successfully logged out.", {autoClose: 3000});
+        }
+    }
+
+    async function checkAuthStatus() {
+        if (isAuthenticated) {
+            await isAuth();
         }
     }
 
@@ -107,7 +113,7 @@ function NavBar({ setAuth, isAuthenticated }) {
 
 
     return (
-        <div className="nav-bar container">
+        <div className="nav-bar container" onMouseEnter={checkAuthStatus}>
             <Link to="/">
                 <img 
                     className="amazon-logo"
