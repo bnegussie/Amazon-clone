@@ -54,6 +54,8 @@ function App() {
 
       if (response.status === 200) {
         setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
       }
       
     } catch (error) {
@@ -81,7 +83,7 @@ function App() {
             <Route exact path="/Checkout" 
               render={props =>
                 <Fragment>
-                  <NavBar setAuth={setAuth} isAuthenticated={isAuthenticated} />
+                  <NavBar setAuth={setAuth} isAuthenticated={isAuthenticated} isAuth={isAuth} />
                   <Checkout />
                 </Fragment>
               }
@@ -116,7 +118,7 @@ function App() {
             <Route path="/" 
               render={props =>
                 <Fragment>
-                  <NavBar setAuth={setAuth} isAuthenticated={isAuthenticated} />
+                  <NavBar setAuth={setAuth} isAuthenticated={isAuthenticated} isAuth={isAuth} />
                   <Home />
                 </Fragment>
               }
