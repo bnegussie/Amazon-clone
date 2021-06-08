@@ -8,9 +8,9 @@ import Select from "react-select";
 // Components:
 import { useStateValue } from "../data-manager/StateProvider";
 import { getCartItemCount } from "./../data-manager/reducer";
+import DropDown from "./DropDown";
 
-import "./../../App.css"
-import { toast } from "react-toastify";
+import "./../../App.css";
 
 function NavBar({ setAuth, isAuthenticated, isAuth }) {
 
@@ -24,6 +24,10 @@ function NavBar({ setAuth, isAuthenticated, isAuth }) {
 
     const [userName, setUserName] = useState("");
 
+    const [dropDown, setDropDown] = useState(false);
+
+    const displayDropDownMenu = () => { setDropDown(true); };
+    const closeDropDownMenu = () => { setDropDown(false) };
     
 
     function setSeachBar(e) {
@@ -33,14 +37,6 @@ function NavBar({ setAuth, isAuthenticated, isAuth }) {
         } else {
             setSelectedSearchCategory("");
             setSelectedSearchCategoryTable("");
-        }
-    }
-
-    async function logout() {
-        if (isAuthenticated) {
-            await setAuth(false);
-            setUserName("");
-            toast.success("You have successfully logged out.", {autoClose: 3000});
         }
     }
 
@@ -135,19 +131,38 @@ function NavBar({ setAuth, isAuthenticated, isAuth }) {
             </div>
 
             <div className="nav-bar-options_container">
-                <Link to={isAuthenticated ? ("/") : ("/User/Sign-In")} onClick={logout}>
-                    <div className="nav-bar-options">
-                        <span className="nav-bar-options_line-one">Hello { userName }</span>
-                        <div className="nav-bar-sign-in">
-                            <span className="nav-bar-options_line-two"> 
-                            {isAuthenticated ?
-                                ("Log out") : ("Sign in")
-                            } 
-                            </span>
-                            <ArrowDropDownIcon />
+
+                {isAuthenticated ? 
+                    (
+                        <div className="nav-bar-options" onMouseEnter={displayDropDownMenu} onMouseLeave={closeDropDownMenu} >
+
+                            <span className="nav-bar-options_line-one">Hello { userName },</span>
+                            <div className="nav-bar-sign-in">
+                                <span className="nav-bar-options_line-two"> 
+                                    Account & Listings
+                                </span>
+                                <ArrowDropDownIcon />
+                            </div>
+                            {dropDown && 
+                                <DropDown isAuthenticated={isAuthenticated} setAuth={setAuth} />
+                            }
                         </div>
-                    </div>
-                </Link>
+                    ) 
+                    :
+                    (
+                        <Link to="/User/Sign-In">
+                            <div className="nav-bar-options">
+                                <span className="nav-bar-options_line-one">Hello</span>
+                                <div className="nav-bar-sign-in">
+                                    <span className="nav-bar-options_line-two"> 
+                                        Sign In
+                                    </span>
+                                </div>
+                            </div>
+                        </Link>
+                    )
+                }
+                
 
                 <div className="nav-bar-options">
                     <span className="nav-bar-options_line-one">Returns</span>

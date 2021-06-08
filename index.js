@@ -9,8 +9,7 @@ const pool = require("./db");
 app.use(
     corsLib({
         origin: [
-            'http://localhost:3000',
-            'https://remindmeee.com'
+            'http://localhost:3000'
         ],
         credentials: true
     })
