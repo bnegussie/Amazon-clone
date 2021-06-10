@@ -6,7 +6,7 @@ CREATE TABLE users(
     user_name VARCHAR(255) NOT NULL,
     user_email VARCHAR(255) NOT NULL,
     user_pwd VARCHAR(255) NOT NULL,
-    user_access_token VARCHAR(255),
+    user_access_token VARCHAR(1023),
     user_refresh_token VARCHAR(255),
     seller_name VARCHAR(255),
     PRIMARY KEY (user_id)

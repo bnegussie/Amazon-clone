@@ -3,118 +3,151 @@ require("dotenv").config();
 const atob = require("atob");
 const pool = require("../db");
 
+// Checking whether or not the token is valid:
 module.exports = async (req, res, next) => {
     
     try {
-        // 1) Destructuring the given data:
+        // 1) Destructuring the given access token:
         const jwtToken = req.cookies.token;
 
         if (!jwtToken) {
-            return res.status(401).json({ message: "The user has not logged in." });
+            return res.status(200).json( "The user has not logged in." );
         }
 
         // 2) Checking the validity of the JWT provided:
         const payload = jwtLib.verify(jwtToken, process.env.jwtSecret);
 
-        // 3) The user has now been verified.
+
+        // Now making sure that this is the access token which our system has granted:
+        const response = await pool.query(
+            "SELECT user_access_token FROM users WHERE user_id = $1", [
+                payload.user
+            ]
+        );
+
+        const activeAccessTokens = response.rows[0].user_access_token;
+
+        if (activeAccessTokens.length === 0) {
+            return res.status(403).json( "Invalid access token." );
+        }
+
+        const accessTokensArray = activeAccessTokens.split(",");
+
+        if ( !accessTokensArray.includes(jwtToken) ) {
+            return res.status(403).json( "Invalid access token." );
+        }
+
+        // The user has provided a valid JWT access token which our system has provided.
+
+        // 3) The user has now been fully verified.
         req.user = payload.user;
         next();
 
     } catch (error) {
         /* This means either the user's access token has expired or the access 
-         * token has been tampered with. Therefore, more accessment will be done on the 
+         * token has been tampered with. Therefore, more assessment will be done on the 
          * access token and if it is a valid token, which has just expired,
          * we will try to get the refresh token to keep the user logged in,
          * if the refresh token has not already expired.
          */
-
+        
         if (error.message === "jwt expired") {
             var userId = "";
-            var clearUserTokensFromDB = true;
+
             try {
-                // Check if this access token is the same one that is in the DB:
+                // 1) Check if this access token is the same one that is in the DB:
                 const exiredJWTToken = req.cookies.token;
                 const expiredPayload = JSON.parse(atob(exiredJWTToken.split('.')[1]));
                 userId = expiredPayload.user;
 
                 const tokensInDB = await pool.query(
-                    "SELECT user_access_token, user_refresh_token FROM users WHERE user_id = $1;", [
+                    "SELECT user_refresh_token, user_access_token FROM users WHERE user_id = $1;", [
                         userId
-                ]);
+                    ]
+                );
 
-                const accessTokenInDB = tokensInDB.rows[0].user_access_token;
+                const accessTokensInDB = tokensInDB.rows[0].user_access_token;
 
-                if (exiredJWTToken === accessTokenInDB) {
-                    // This is the user's access token.
-                    // Starting the process of creating a new access token:
+                if (accessTokensInDB.length === 0) {
+                    return res.status(403).json( "Invalid access token." );
+                }
 
-                    const jwtRefreshTokenInDB = tokensInDB.rows[0].user_refresh_token;
-                    
-                    // Making sure the refresh token has not exired:
-                    const refreshPayload = jwtLib.verify(jwtRefreshTokenInDB, process.env.jwtRefresh);
+                var accessTokensArray = accessTokensInDB.split(",");
 
-                    if (userId !== refreshPayload.user) {
-                        clearUserTokensFromDB = false;
-                        throw "This is not a valid user.";
-                    }
+                if ( !accessTokensArray.includes( exiredJWTToken ) ) {
+                    return res.status(403).json( "Invalid access token." );
+                }
 
-                    const newAccessToken = jwtLib.sign(
-                        { user: userId },
-                        process.env.jwtSecret,
-                        { expiresIn: 5 }
-                    );
 
+                // 2) Using the refresh token to get the user a new access token:
+                const jwtRefreshTokenInDB = tokensInDB.rows[0].user_refresh_token;
+                
+                // Making sure the refresh token has not expired:
+                const refreshPayload = jwtLib.verify(jwtRefreshTokenInDB, process.env.jwtRefresh);
+
+                const accessExpTime = parseInt(process.env.accessExpTime, 10);
+
+                const newAccessToken = jwtLib.sign(
+                    { user: userId },
+                    process.env.jwtSecret,
+                    { expiresIn: accessExpTime }
+                );
+                
+
+                if ( !accessTokensArray.includes( newAccessToken ) ) {
+                    /* This check exists because we want to prevent any duplicate access
+                     * tokens from being placed in the user's account. Duplicate access
+                     * tokens occur when another thread which just ran, a few 
+                     * milliseconds ago, and created this identical access token.
+                     */
+
+                    // Placing the new access token with the other active access tokens:
+                    accessTokensArray = insert(accessTokensArray, newAccessToken);
+
+                    // Placing the new and old access tokens back in the DB:
                     await pool.query("UPDATE users SET user_access_token = $1 WHERE user_id = $2", [
-                        newAccessToken, userId
+                        accessTokensArray.toString(), userId
                     ]);
 
-                    // The token exires within a minute, but the cooke doesn't
-                    // exire for a whole day.
-                    const accessTokenInCookieExpTime = 1000 * 60 * 60 * 24;
+                    const accessCookieExpTime =  parseInt(process.env.accessCookieExpTime, 10);
 
+                    // Placing the new access token in the user's browser, as a cookie:
                     res.cookie('token', newAccessToken, {
-                        expires: new Date(Date.now() + accessTokenInCookieExpTime),
+                        expires: new Date(Date.now() + accessCookieExpTime),
                         secure: true,
                         httpOnly: true,
                         sameSite: 'strict'
                     });
-
-                    req.user = refreshPayload.user;
-                    next();
-
-                } else {
-                    throw { message: "Invalid access token." };
                 }
+
+                req.user = userId;
+                next();                
 
             } catch (error) {
-                
-                if (clearUserTokensFromDB) {
-                    try {
-                        /* The refresh token has expired or someone might be trying to hack a
-                         * user's account so we will kick all of the users off so only the
-                         * account user can use their valid credentials and log back in.
-                         */
-                        const clear = "";
-                        await pool.query(
-                            "UPDATE users SET user_access_token = $1, user_refresh_token = $2 WHERE user_id = $3", [
-                                clear, clear, userId
-                        ]);
+                // Either the refresh token has expired or the access token, in the browser,
+                // has been tampered with.
 
-                    } catch (error) {
-                        // The code below simply needs to be run, regardless of a DB issue.
-                    }
-                }
-
-                // The refresh token has expired or the access token has been tampered with.
                 res.clearCookie("token");
-                return res.status(403).json({ message: "Invalid tokens." });
+                return res.status(403).json( `Invalid tokens. ${error.message}` );
             }
 
         } else {
             // The access token has been tampered with.
             res.clearCookie("token");
-            return res.status(403).json({ message: "Invalid access token." });
+            return res.status(403).json( "Invalid access token." );
         }
 
     }
 };
+
+// Treating the array like a queue:
+function insert(list, newElement) {
+    const accessLength = parseInt(process.env.accessLength, 10);
+    if (list.length >= accessLength) {
+        // Removing the first element in the list;
+        list.shift();
+    }
+    list.push(newElement);
+    
+    return list;
+}
