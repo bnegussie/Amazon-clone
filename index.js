@@ -3,6 +3,9 @@ const app = expressLib();
 const corsLib = require("cors");
 const cookieParser = require('cookie-parser');
 const pool = require("./db");
+require("dotenv").config();
+
+app.use( expressLib.static( process.env.uploadPath ) );
 
 
 // Connecting the client and server:

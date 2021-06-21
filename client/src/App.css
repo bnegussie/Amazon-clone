@@ -7,10 +7,14 @@
     --border-color-three: #846a29;
 }
 
-input {
+input, textarea {
     text-indent: 5px;
     color: black;
     font-size: 16px;
+}
+
+button:hover {
+    cursor: pointer;
 }
 /************************************** START: CHECKOUT.JS ***************************************/
 .checkout-container {
@@ -164,6 +168,116 @@ input {
 }
 
 /************************************** END: CREATEACCOUNT.JS ************************************/
+/************************************** START: CREATEANEWLISTING.JS ******************************/
+/* CSS Abbreviations
+Definition: create-a-new-listing-container
+Term:       c-new-lst-cont
+
+Definition: create-a-new-listing-input-container
+Term:       c-new-lst-input-cont
+
+Definition: product-category-drop-down-container
+Term:       p-categ-dd-cont
+
+Definition: create-a-new-listing-long-title-container
+Term:       c-new-lst-long-title-cont
+
+Definition: create-a-new-listing-btn-container
+Term:       c-new-lst-btn-cont
+
+Definition: create-a-new-listing-btn
+Term:       c-new-lst-btn
+*/
+
+.c-new-lst-cont {
+    background: white;
+
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.c-new-lst-input-cont {
+    width: 500px;
+    padding: 20px;
+
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.c-new-lst-input-cont > h1 {
+    font-weight: 500;
+    margin-bottom: 20px;
+
+    text-align: center;
+}
+
+.c-new-lst-input-cont > form > h5 {
+    margin-bottom: 5px;
+    text-indent: 3px;
+}
+
+.c-new-lst-input-cont > form > input,
+.c-new-lst-input-cont > form > textarea {
+    background-color: white;
+    border-color: lightgray;
+    border-radius: 4px;
+
+    height: 30px;
+    width: 98%;
+    margin-bottom: 10px;
+}
+
+.c-new-lst-input-cont > form > textarea {
+    height: 100px;
+    border: 2px solid darkgray;
+}
+
+.c-new-lst-long-title-cont {
+    margin-bottom: 5px;
+    text-indent: 3px;
+    display: flex;
+}
+
+.c-new-lst-long-title-cont > p {
+    font-size: 0.85rem;
+}
+
+.c-new-lst-btn {
+    background-color: var(--amazon-orange);
+    border: 1px solid;
+    border-radius: 0.25rem;
+    border-color: var(--border-color-one) var(--border-color-two) var(--border-color-three);
+    color: #111;
+    font-size: 1.25rem;
+
+    width: 100%;
+    height: 2.5rem;
+}
+
+.c-new-lst-btn-cont {
+    text-align: center;
+    margin: 0.25rem 0;
+}
+
+.drop-down-product-categories {
+    width: 100%;
+    min-width: 200px;
+
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+}
+
+.p-categ-dd-cont {
+    margin-bottom: 1rem;
+}
+/************************************** END: CREATEANEWLISTING.JS ********************************/
 /************************************** START: DROPDOWN.JS ***************************************/
 .drop-down-container {
     width: 400px;
@@ -547,6 +661,14 @@ input {
     /* END: SUBTOTAL.JS */
 }
 
+@media screen and (max-width: 600px) {
+    /* START: CREATEANEWLISTING.JS */
+    .c-new-lst-input-cont {
+        width: 400px;
+    }
+    /* END: CREATEANEWLISTING.JS */
+}
+
 @media screen and (max-width: 500px) {
     /* START: SUBTOTAL.JS */
     .subtotal-container {
@@ -555,4 +677,24 @@ input {
         margin: 0 5% 0 5%;
     }
     /* END: SUBTOTAL.JS */
+}
+
+@media screen and (max-width: 400px) {
+    /* START: CREATEANEWLISTING.JS */
+    .c-new-lst-input-cont {
+        width: 300px;
+    }
+    /* END: CREATEANEWLISTING.JS */
+}
+
+@media screen and (max-width: 300px) {
+    /* START: CREATEANEWLISTING.JS */
+    .c-new-lst-input-cont {
+        width: 200px;
+    }
+
+    .c-new-lst-long-title-cont > p {
+        font-size: 0.7rem;
+    }
+    /* END: CREATEANEWLISTING.JS */
 }
