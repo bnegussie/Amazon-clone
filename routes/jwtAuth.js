@@ -27,10 +27,13 @@ router.post("/create-account", validInfo, async(req, res) => {
         const salt = await bcryptLib.genSalt(saltRound);
         const bcryptPwd = await bcryptLib.hash(pwd, salt);
 
+        // Default:
+        const sellerID = "";
+
 
         // 4) Entering the new user into the DB:
-        const addUser = await pool.query("INSERT INTO users (user_name, user_email, user_pwd) VALUES ($1, $2, $3) RETURNING *",
-            [userName, emailLowercase, bcryptPwd]
+        const addUser = await pool.query("INSERT INTO users (user_name, user_email, user_pwd, seller_id) VALUES ($1, $2, $3, $4) RETURNING *",
+            [userName, emailLowercase, bcryptPwd, sellerID]
         );
         
 

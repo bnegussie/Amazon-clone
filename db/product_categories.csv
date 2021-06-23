@@ -1,4 +1,4 @@
-p_c_name,p_c_table_name
+c_name,c_name_in_db
 "Arts, Crafts, & Sewing",c_arts_crafts_and_sewing
 Automotive Parts & Accessories,c_automotive_parts_and_accessories
 Books,c_books
