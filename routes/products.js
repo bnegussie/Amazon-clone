@@ -4,12 +4,13 @@ require("dotenv").config();
 const mkdirp = require('mkdirp');
 const crypto = require("crypto");
 const fs = require('fs');
+const authorization = require("./../middleware/authorization");
 
 const multer = require('multer');
 
 const storage = multer.diskStorage({
     destination: async function(req, files, cb) {
-        const newImgPath = `${process.env.uploadPath}/${Date.now()}/${crypto.randomBytes(10).toString('hex')}`;
+        const newImgPath = `${process.env.uploadPath}/${Date.now()}/${crypto.randomBytes(20).toString('hex')}`;
         await mkdirp( newImgPath );
         cb(null, newImgPath);
         
@@ -49,21 +50,19 @@ router.get("/categories", async(req, res) => {
 });
 /************************************** END: product_categories DB *******************************/
 /************************************** START: products DB ***************************************/
-router.post("/listing", upload.array('productImages', 2), async(req, res) => {
+router.post("/listing", authorization, upload.array('productImages', 5), async(req, res) => {
     try {
-        /* MAKE SURE TO CONNECT THE AUTH MIDDLEWARE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-        // req.user
+        const userID = req.user;
 
+        const {sellerID, pBrandName, pTitle, pDesc, pPrice, selectedProductCategory, pAvailableQuantity} = req.body;
 
-
-        const {userID, sellerID, pTitle, pDesc, pPrice, selectedProductCategory, pAvailableQuantity} = req.body;
 
         // Default:
         const currencySymbol = "$";
         const listingCreatedDate = new Date();
 
         const filePath = Array(5).fill("");
-        const publicFilePath = Array(5).fill("");
+        const publicURL = Array(5).fill("");
 
         req.files.forEach(function(file, i) {
             let fileArray = file.path.split("\\");
@@ -74,7 +73,7 @@ router.post("/listing", upload.array('productImages', 2), async(req, res) => {
             const publicPath = "http://localhost:5000/" + publicArray.join("/");
             
             filePath[i] = purifiedPath;
-            publicFilePath[i] = publicPath;
+            publicURL[i] = publicPath;
         });
 
         // Updating the user's sellerID:
@@ -83,12 +82,12 @@ router.post("/listing", upload.array('productImages', 2), async(req, res) => {
         );
 
         // Storing the new product listing in the DB:
-        const newListing = await pool.query("INSERT INTO products (user_id, seller_id, p_name, p_desc, p_price, p_price_currency_symbol, p_category, p_available_quantities, p_photo_1_path, p_photo_1_public_path, p_photo_2_path, p_photo_2_public_path, p_photo_3_path, p_photo_3_public_path, p_photo_4_path, p_photo_4_public_path, p_photo_5_path, p_photo_5_public_path, p_listing_created_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19) RETURNING *",
-            [userID, sellerID, pTitle, pDesc, pPrice, currencySymbol, selectedProductCategory, pAvailableQuantity, filePath[0], publicFilePath[0], filePath[1], publicFilePath[1], filePath[2], publicFilePath[2], filePath[3], publicFilePath[3], filePath[4], publicFilePath[4], listingCreatedDate]
+        const newListing = await pool.query("INSERT INTO products (user_id, seller_id, p_brand_name, p_title, p_desc, p_price, p_price_currency_symbol, p_category, p_available_quantities, p_photo_1_path, p_photo_1_public_path, p_photo_2_path, p_photo_2_public_path, p_photo_3_path, p_photo_3_public_path, p_photo_4_path, p_photo_4_public_path, p_photo_5_path, p_photo_5_public_path, p_listing_created_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20) RETURNING *",
+            [userID, sellerID, pBrandName, pTitle, pDesc, pPrice, currencySymbol, selectedProductCategory, pAvailableQuantity, filePath[0], publicURL[0], filePath[1], publicURL[1], filePath[2], publicURL[2], filePath[3], publicURL[3], filePath[4], publicURL[4], listingCreatedDate]
         );
 
 
-        res.status(200).json("You have successfully created a new product listing.");
+        res.status(200).json({ message: "You have successfully created a new product listing." });
         
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -96,15 +95,14 @@ router.post("/listing", upload.array('productImages', 2), async(req, res) => {
 });
 
 // Getting a product listing for the product owner:
-router.get("/listing/:id", async(req, res) => {
+router.get("/listing/:id", authorization, async(req, res) => {
     try {
-        /* MAKE SURE TO CONNECT THE AUTH MIDDLEWARE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-        // req.user
-
+        const userID = req.user;
         const { id } = req.params;
-        // const { userID } = req.user;--------------------
 
-        const product = await pool.query("SELECT p_id, seller_id, p_name, p_desc, p_price, p_price_currency_symbol, p_category, p_available_quantities, p_photo_1_public_path, p_photo_2_public_path, p_photo_3_public_path, p_photo_4_public_path, p_photo_5_public_path FROM products WHERE p_id = $1;", [id]);
+        const product = await pool.query("SELECT p_id, seller_id, p_brand_name, p_title, p_desc, p_price, p_price_currency_symbol, p_category, p_available_quantities, p_photo_1_public_path, p_photo_2_public_path, p_photo_3_public_path, p_photo_4_public_path, p_photo_5_public_path FROM products WHERE p_id = $1 AND user_id = $2;",
+            [id, userID]
+        );
 
         if (product.rows.length === 0) {
             return res.status(401).json({ message: "No matching product available." });
@@ -118,23 +116,23 @@ router.get("/listing/:id", async(req, res) => {
     }
 });
 
-router.delete("/listing/:id", async(req, res) => {
+// Allowing only the product owner to remove the product from the Amazon-clone Market:
+router.delete("/listing/:id", authorization, async(req, res) => {
     try {
-        /* MAKE SURE TO CONNECT THE AUTH MIDDLEWARE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-        // req.user
-
+        const userID = req.user;
         const { id } = req.params;
-        // const { userID } = req.user;--------------------
 
-        // Only owners should be able to delete a Product listing.
-
-        const photos = await pool.query("SELECT p_photo_1_path, p_photo_2_path, p_photo_3_path, p_photo_4_path, p_photo_5_path FROM products WHERE p_id = $1", [id]);
+        const photos = await pool.query("SELECT p_photo_1_path, p_photo_2_path, p_photo_3_path, p_photo_4_path, p_photo_5_path FROM products WHERE p_id = $1 AND user_id = $2",
+            [id, userID]
+        );
 
         if (photos.rows.length === 0) {
             return res.status(403).json("Unauthorized to perform this deletion.");
         }
 
-        const remove = await pool.query("DELETE FROM products WHERE p_id = $1 RETURNING *", [id]);
+        const remove = await pool.query("DELETE FROM products WHERE p_id = $1 AND user_id = $2 RETURNING *",
+            [id, userID]
+        );
 
 
         // Deleting the product photos from the server:
@@ -146,7 +144,7 @@ router.delete("/listing/:id", async(req, res) => {
                 const dirToBeDeleted = dirArrayToBeDeleted.join("/");
 
 
-                // Deleting the directory recursively:
+                // Deleting the directory, where the product photo resides, recursively:
                 fs.rmdirSync(dirToBeDeleted, { recursive: true });
             }
         }
